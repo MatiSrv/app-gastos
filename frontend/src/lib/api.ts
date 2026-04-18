@@ -12,7 +12,7 @@ import type {
   DashboardOverview,
 } from "./types"
 
-const http = axios.create({ baseURL: "http://localhost:8000" })
+const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })
 
 // Attach Supabase JWT on every request
 http.interceptors.request.use(async (config) => {
