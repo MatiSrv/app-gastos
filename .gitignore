@@ -1,0 +1,32 @@
+# ========================
+# Frontend (Node / Vite)
+# ========================
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# ========================
+# Backend (Python)
+# ========================
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.venv/
+backend/venv/
+backend/.env
+
+# ========================
+# Claude Code / tooling
+# ========================
+.claude/
+.agents/
+.mcp.json
+skills-lock.json
+
+# ========================
+# OS
+# ========================
+.DS_Store
+Thumbs.db
