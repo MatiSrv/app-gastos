@@ -1,15 +1,18 @@
 import { useState } from "react"
+import { Download } from "lucide-react"
 import { MonthSelector } from "@/components/dashboard/MonthSelector"
 import { KPICard } from "@/components/dashboard/KPICard"
 import { ExpenseByCategoryChart } from "@/components/dashboard/ExpenseByCategoryChart"
 import { BudgetProgressBars } from "@/components/dashboard/BudgetProgressBars"
 import { IncomeVsExpenseChart } from "@/components/dashboard/IncomeVsExpenseChart"
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions"
+import { ExportExpensesDialog } from "@/components/dashboard/ExportExpensesDialog"
 import { useMonthlyDashboard } from "@/hooks/useDashboard"
 import { currentMonth, prevMonth } from "@/lib/utils"
 
 export function DashboardPage() {
   const [month, setMonth] = useState(currentMonth())
+  const [exportOpen, setExportOpen] = useState(false)
   const { data, isLoading } = useMonthlyDashboard(month)
   const { data: prevData } = useMonthlyDashboard(prevMonth(month))
 
@@ -37,7 +40,25 @@ export function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <KPICard label="Ingresos" amount={data?.total_income ?? 0} variant="income" changePercent={incomeChange} />
-          <KPICard label="Gastos" amount={data?.total_expense ?? 0} variant="expense" changePercent={expenseChange} />
+          <KPICard
+            label="Gastos"
+            amount={data?.total_expense ?? 0}
+            variant="expense"
+            changePercent={expenseChange}
+            action={
+              data && (
+                <button
+                  type="button"
+                  onClick={() => setExportOpen(true)}
+                  className="p-1 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Exportar gastos a Markdown"
+                  title="Exportar a Markdown"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+              )
+            }
+          />
           <KPICard label="Balance neto" amount={data?.net ?? 0} variant="balance" />
         </div>
       )}
@@ -82,6 +103,15 @@ export function DashboardPage() {
           <RecentTransactions transactions={data?.top_expenses ?? []} />
         )}
       </div>
+
+      {data && (
+        <ExportExpensesDialog
+          open={exportOpen}
+          onOpenChange={setExportOpen}
+          data={data}
+          month={month}
+        />
+      )}
     </div>
   )
 }

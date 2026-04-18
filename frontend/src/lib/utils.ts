@@ -45,3 +45,12 @@ export function nextMonth(month: string): string {
   const date = new Date(parseInt(year), parseInt(mon), 1)
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
 }
+
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    return false
+  }
+}

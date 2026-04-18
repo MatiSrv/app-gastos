@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 
@@ -6,9 +7,10 @@ interface KPICardProps {
   amount: number
   variant: "income" | "expense" | "balance"
   changePercent?: number
+  action?: ReactNode
 }
 
-export function KPICard({ label, amount, variant, changePercent }: KPICardProps) {
+export function KPICard({ label, amount, variant, changePercent, action }: KPICardProps) {
   const colors = {
     income: "text-emerald-400",
     expense: "text-rose-400",
@@ -25,7 +27,10 @@ export function KPICard({ label, amount, variant, changePercent }: KPICardProps)
 
   return (
     <div className="bg-card border border-border rounded-lg p-5">
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm text-muted-foreground">{label}</p>
+        {action}
+      </div>
       <p className={`text-2xl font-bold mt-1 ${colors[variant]}`}>{formatCurrency(amount)}</p>
       {changePercent !== undefined && (
         <div className={`flex items-center gap-1 mt-1 text-xs ${trendColor}`}>
