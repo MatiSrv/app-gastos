@@ -57,7 +57,7 @@ export function Sidebar({ collapsed = false, onToggle, mobile = false }: Sidebar
             <span>{label}</span>
           </NavLink>
         ))}
-        {gastosNavItems.map(({ to, icon: Icon, label }) => (
+        {isAdmin && gastosNavItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -65,11 +65,7 @@ export function Sidebar({ collapsed = false, onToggle, mobile = false }: Sidebar
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center gap-0.5 px-2 py-1 rounded text-xs transition-colors",
-                isAdmin
-                  ? isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                  : "pointer-events-none opacity-40 text-muted-foreground"
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )
             }
           >
