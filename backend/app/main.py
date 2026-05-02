@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import categories, accounts, transactions, transfers, dashboard, users
+from app.routes import categories, accounts, transactions, transfers, dashboard, users, savings
 
 app = FastAPI(title="Expense Tracker API", version="1.0.0")
 
@@ -23,6 +23,7 @@ app.include_router(transactions.router)
 app.include_router(transfers.router)
 app.include_router(dashboard.router)
 app.include_router(users.router, prefix="/api/users")
+app.include_router(savings.router)
 
 # healtgh check endpoint
 @app.get("/health")

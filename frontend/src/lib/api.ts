@@ -11,6 +11,8 @@ import type {
   MonthComparison,
   DashboardOverview,
   UserRole,
+  SavingsMember,
+  SavingsContribution,
 } from "./types"
 
 const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })
@@ -77,3 +79,21 @@ export const dashboardApi = {
 // ---- Users ----
 export const getMe = (): Promise<{ user_id: string; role: UserRole }> =>
   http.get<{ user_id: string; role: UserRole }>("/api/users/me").then((r) => r.data)
+
+// ---- Savings ----
+export const savingsApi = {
+  getMembers: () =>
+    http.get<SavingsMember[]>("/api/savings/members").then((r) => r.data),
+  createMember: (body: Pick<SavingsMember, "user_id" | "display_name" | "joined_at">) =>
+    http.post<SavingsMember>("/api/savings/members", body).then((r) => r.data),
+  getContributions: (month?: string) =>
+    http.get<SavingsContribution[]>("/api/savings/contributions", {
+      params: month ? { month } : {},
+    }).then((r) => r.data),
+  createContribution: (body: { member_id: string; amount: number; month: string; notes?: string }) =>
+    http.post<SavingsContribution>("/api/savings/contributions", body).then((r) => r.data),
+  updateContribution: (id: string, body: { amount?: number; notes?: string }) =>
+    http.patch<SavingsContribution>(`/api/savings/contributions/${id}`, body).then((r) => r.data),
+  deleteContribution: (id: string) =>
+    http.delete(`/api/savings/contributions/${id}`),
+}

@@ -121,3 +121,21 @@ export interface DashboardOverview {
   current_month: MonthlyDashboard
   recent_transactions: Transaction[]
 }
+
+export interface SavingsMember {
+  id: string
+  user_id: string
+  display_name: string
+  joined_at: string
+  created_at: string
+}
+
+export interface SavingsContribution {
+  id: string
+  member_id: string
+  member_display_name: string
+  amount: number
+  month: string
+  notes?: string
+  created_at: string
+}
