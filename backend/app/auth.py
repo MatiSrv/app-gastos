@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from jose.exceptions import JWKError
 
-from app.config import SUPABASE_URL
+from app.config import SUPABASE_URL, supabase
 
 logger = logging.getLogger("uvicorn.error")
 bearer_scheme = HTTPBearer()
@@ -59,3 +59,17 @@ def get_current_user(
     except (JWTError, JWKError) as e:
         logger.error(f"[AUTH] JWT verification failed: {e}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+
+def get_user_role(user_id: str) -> str:
+    result = supabase.table("user_roles").select("role").eq("user_id", user_id).maybe_single().execute()
+    if result.data is None:
+        return "savings"
+    return result.data["role"]
+
+
+def require_admin(user_id: str = Depends(get_current_user)) -> str:
+    role = get_user_role(user_id)
+    if role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    return user_id

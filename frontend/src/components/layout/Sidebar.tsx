@@ -8,12 +8,18 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  PiggyBank,
+  Lock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 
-const navItems = [
+const savingsNavItems = [
+  { to: "/savings", icon: PiggyBank, label: "Aportes" },
+]
+
+const gastosNavItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/transactions", icon: ArrowLeftRight, label: "Transacciones" },
   { to: "/categories", icon: Tag, label: "Categorías" },
@@ -28,13 +34,30 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed = false, onToggle, mobile = false }: SidebarProps) {
-  const { signOut } = useAuth()
+  const { signOut, role } = useAuth()
   const navigate = useNavigate()
+  const isAdmin = role === "admin"
 
   if (mobile) {
     return (
       <nav className="flex items-center justify-around bg-card border-t border-border h-14 px-2">
-        {navItems.map(({ to, icon: Icon, label }) => (
+        {savingsNavItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === "/savings"}
+            className={({ isActive }) =>
+              cn(
+                "flex flex-col items-center gap-0.5 px-2 py-1 rounded text-xs transition-colors",
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              )
+            }
+          >
+            <Icon className="h-5 w-5" />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+        {gastosNavItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -42,7 +65,11 @@ export function Sidebar({ collapsed = false, onToggle, mobile = false }: Sidebar
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center gap-0.5 px-2 py-1 rounded text-xs transition-colors",
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                isAdmin
+                  ? isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                  : "pointer-events-none opacity-40 text-muted-foreground"
               )
             }
           >
@@ -69,11 +96,12 @@ export function Sidebar({ collapsed = false, onToggle, mobile = false }: Sidebar
 
       {/* Nav */}
       <nav className="flex-1 p-2 space-y-1">
-        {navItems.map(({ to, icon: Icon, label }) => (
+        {/* Savings nav items — always enabled */}
+        {savingsNavItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
-            end={to === "/"}
+            end={to === "/savings"}
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
@@ -86,6 +114,30 @@ export function Sidebar({ collapsed = false, onToggle, mobile = false }: Sidebar
           >
             <Icon className="h-5 w-5 shrink-0" />
             {!collapsed && <span>{label}</span>}
+          </NavLink>
+        ))}
+
+        {/* Gastos nav items — disabled for non-admin */}
+        {gastosNavItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === "/"}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                collapsed ? "justify-center px-2" : "",
+                isAdmin
+                  ? isActive
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  : "pointer-events-none opacity-40 text-muted-foreground"
+              )
+            }
+          >
+            <Icon className="h-5 w-5 shrink-0" />
+            {!collapsed && <span className="flex-1">{label}</span>}
+            {!collapsed && !isAdmin && <Lock className="h-3 w-3 shrink-0" />}
           </NavLink>
         ))}
       </nav>

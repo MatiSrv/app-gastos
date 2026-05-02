@@ -1,5 +1,6 @@
 export type TransactionType = "expense" | "income"
 export type CategoryType = "expense" | "income"
+export type UserRole = "admin" | "savings"
 
 export interface Category {
   id: string

@@ -10,6 +10,7 @@ import type {
   MonthlyDashboard,
   MonthComparison,
   DashboardOverview,
+  UserRole,
 } from "./types"
 
 const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })
@@ -72,3 +73,7 @@ export const dashboardApi = {
     http.get<MonthComparison>("/api/dashboard/comparison", { params: { from, to } }).then((r) => r.data),
   overview: () => http.get<DashboardOverview>("/api/dashboard/overview").then((r) => r.data),
 }
+
+// ---- Users ----
+export const getMe = (): Promise<{ user_id: string; role: UserRole }> =>
+  http.get<{ user_id: string; role: UserRole }>("/api/users/me").then((r) => r.data)
