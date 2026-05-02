@@ -1,5 +1,5 @@
 import axios from "axios"
-import { supabase } from "./supabase"
+import { getCachedToken } from "./supabase"
 import type {
   Category,
   Account,
@@ -15,10 +15,10 @@ import type {
 
 const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })
 
-// Attach Supabase JWT on every request
-http.interceptors.request.use(async (config) => {
-  const { data } = await supabase.auth.getSession()
-  const token = data.session?.access_token
+// Attach Supabase JWT on every request — reads from module-level cache to
+// avoid calling getSession() inside onAuthStateChange (deadlock with Supabase v2 lock).
+http.interceptors.request.use((config) => {
+  const token = getCachedToken()
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })

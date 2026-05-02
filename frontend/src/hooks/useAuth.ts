@@ -1,6 +1,6 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
 import type { Session, User } from "@supabase/supabase-js"
-import { supabase } from "@/lib/supabase"
+import { supabase, cacheSession } from "@/lib/supabase"
 import { getMe } from "@/lib/api"
 import type { UserRole } from "@/lib/types"
 
@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
+      cacheSession(s)
       setSession(s)
       setUser(s?.user ?? null)
       await fetchRole(s)
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      cacheSession(s)
       setLoading(true)
       setSession(s)
       setUser(s?.user ?? null)
