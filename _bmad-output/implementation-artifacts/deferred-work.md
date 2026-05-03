@@ -9,28 +9,18 @@ _Replaced by Goal B1 (completed via spec-savings-contributions) and Goal B2 belo
 
 ---
 
-## Goal B2 — Savings Fund & Returns
+## ~~Goal B2 — Savings Fund & Returns~~
 
-**Deferred from:** Quick Dev session — savings-contributions split (2026-05-02)
-**Prerequisite:** spec-savings-contributions must be completed and merged first.
+~~**Deferred from:** Quick Dev session — savings-contributions split (2026-05-02)~~
 
-### Scope
-Fund management and returns calculation layer on top of the contributions foundation:
+_Completed via spec-savings-fund-returns (2026-05-02). DB migration in `supabase/migrations/savings_fund.sql` must be applied manually via Supabase Dashboard._
 
-- **Database tables**: savings_fund_months
-- **Backend**: monthly TNA entry by admin, mark which contributions enter the fund, returns calculation (proportional share)
-- **Frontend**:
-  - Admin-only: form to enter monthly TNA, toggle which contributions enter the fund, view returns for the cycle
-  - Dashboard: group view (total fund, total returns, all members) and personal view (individual contributions, individual returns)
+---
 
-### Business logic to implement
-- Admin (Mati) manually marks each contribution as entering the fund or not
-- Returns per person = (person's accumulated contribution / total fund) × monthly TNA-derived return
-- Monthly fund cycle = 28 days; returns re-invested with new contributions next month
-- Both individual and total fund returns must be visible
+## Deferred: Savings fund/returns polish (from review of spec-savings-fund-returns, 2026-05-02)
 
-### Run with
-`/bmad-quick-dev` in a fresh context window, after spec-savings-contributions is live.
+- **calculate_returns over-fetches contributions for non-admin** — `GET /returns` fetches all enters_fund contributions from DB regardless of role, then filters members in Python. Acceptable for small group; push a `member_id` filter into the DB query if group grows or privacy becomes a concern.
+- **FundMonthForm TNA NaN on empty submit** — `parseFloat("")` produces NaN; HTML `required` attribute is the only client-side guard. Backend rejects with 422 so no data corruption, but the error is silent in the UI. Add a JS guard (`if (!tna || isNaN(parseFloat(tna))) return`) before mutate for better UX.
 
 ---
 

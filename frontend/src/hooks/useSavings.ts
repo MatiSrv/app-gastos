@@ -64,3 +64,38 @@ export function useDeleteContribution() {
     onError: () => toast.error("Error al eliminar aporte"),
   })
 }
+
+export function useFundMonths() {
+  return useQuery({ queryKey: ["savings-fund-months"], queryFn: savingsApi.getFundMonths })
+}
+
+export function useCreateFundMonth() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: savingsApi.createFundMonth,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["savings-fund-months"] })
+      qc.invalidateQueries({ queryKey: ["savings-returns"] })
+      toast.success("Mes del fondo agregado")
+    },
+    onError: (err: { response?: { data?: { detail?: string } } }) =>
+      toast.error(err?.response?.data?.detail ?? "Error al agregar mes"),
+  })
+}
+
+export function useToggleFundEntry() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, enters_fund }: { id: string; enters_fund: boolean }) =>
+      savingsApi.toggleFundEntry(id, enters_fund),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["savings-contributions"] })
+      qc.invalidateQueries({ queryKey: ["savings-returns"] })
+    },
+    onError: () => toast.error("Error al actualizar"),
+  })
+}
+
+export function useReturns() {
+  return useQuery({ queryKey: ["savings-returns"], queryFn: savingsApi.getReturns })
+}

@@ -13,6 +13,8 @@ import type {
   UserRole,
   SavingsMember,
   SavingsContribution,
+  SavingsFundMonth,
+  SavingsReturns,
 } from "./types"
 
 const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000" })
@@ -96,4 +98,12 @@ export const savingsApi = {
     http.patch<SavingsContribution>(`/api/savings/contributions/${id}`, body).then((r) => r.data),
   deleteContribution: (id: string) =>
     http.delete(`/api/savings/contributions/${id}`),
+  toggleFundEntry: (id: string, enters_fund: boolean) =>
+    http.patch<SavingsContribution>(`/api/savings/contributions/${id}/fund`, { enters_fund }).then((r) => r.data),
+  getFundMonths: () =>
+    http.get<SavingsFundMonth[]>("/api/savings/fund-months").then((r) => r.data),
+  createFundMonth: (body: { month: string; tna: number }) =>
+    http.post<SavingsFundMonth>("/api/savings/fund-months", body).then((r) => r.data),
+  getReturns: () =>
+    http.get<SavingsReturns>("/api/savings/returns").then((r) => r.data),
 }

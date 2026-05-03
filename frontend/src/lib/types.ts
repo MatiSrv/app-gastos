@@ -137,5 +137,36 @@ export interface SavingsContribution {
   amount: number
   month: string
   notes?: string
+  enters_fund: boolean
   created_at: string
+}
+
+export interface SavingsFundMonth {
+  id: string
+  month: string
+  tna: number
+  created_at: string
+}
+
+export interface SavingsMonthlyDetail {
+  month: string
+  contribution_entered: number
+  accumulated: number
+  monthly_rate: number
+  return_amount: number
+  cumulative_return: number
+}
+
+export interface SavingsPersonReturn {
+  member_id: string
+  display_name: string
+  monthly_details: SavingsMonthlyDetail[]
+  total_accumulated: number
+  total_return: number
+}
+
+export interface SavingsReturns {
+  members: SavingsPersonReturn[]
+  total_fund: number
+  total_return: number
 }
